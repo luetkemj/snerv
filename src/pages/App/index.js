@@ -1,11 +1,37 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import useEventListener from "@use-it/event-listener";
 
 import { getNeighbor } from "../../lib/grid/math";
 import "./App.scss";
 
 function App() {
-  const [playerLoc, setPlayerLoc] = useState({ col: 0, row: 0 });
+  // const spriteCount = 1;
+  const [gameCounter, setGameCounter] = useState(0);
+  const [sprites, setSprite] = useState({
+    0: {
+      type: "PLAYER",
+      col: 0,
+      row: 0,
+      id: 0
+    },
+
+    1: {
+      type: "MONSTER",
+      col: 10,
+      row: 10,
+      id: 1
+    }
+  });
+
+  useEffect(() => {
+    console.log("gameTicked!");
+    const directions = ["N", "NE", "E", "SE", "S", "SW", "W", "NW"];
+    const randomDirection = () =>
+      directions[Math.floor(Math.random() * directions.length)];
+    moveSprite(sprites[1], randomDirection());
+    moveSprite(sprites[2], randomDirection());
+    moveSprite(sprites[3], randomDirection());
+  }, [gameCounter]);
 
   const PLAYER_MOVE_N = ["ArrowUp", "8", "w"];
   const PLAYER_MOVE_NE = ["9"];
@@ -21,49 +47,70 @@ function App() {
     cols: 60
   };
 
+  // const directions = ["N", "NE", "E", "SE", "S", "SW", "W", "NW"];
+
+  // const tick = () => {
+  //   moveSprite(monsterLoc, "E");
+  // };
+
   const moveSprite = (sprite, dir) => {
-    const newLoc = getNeighbor(sprite, dir);
+    const { col, row } = sprite;
+    const newLoc = getNeighbor({ col, row }, dir);
+
+    // move to a boundary collisions function of some sort...
     if (newLoc.col < 0) return;
     if (newLoc.col === map.cols) return;
     if (newLoc.row < 0) return;
     if (newLoc.row === map.rows) return;
 
-    return setPlayerLoc(newLoc);
+    const newSprites = { ...sprites };
+    newSprites[sprite.id] = { ...sprite, ...newLoc };
+
+    setSprite({ ...newSprites });
+  };
+
+  const gameTick = () => {
+    setGameCounter(gameCounter + 1);
+  };
+
+  const movePlayer = dir => {
+    moveSprite(sprites[0], dir);
+    gameTick();
   };
 
   const handleKeyDown = ({ key }) => {
     console.log(key);
 
     if (PLAYER_MOVE_N.includes(String(key))) {
-      moveSprite(playerLoc, "N");
+      movePlayer("N");
     }
 
     if (PLAYER_MOVE_NE.includes(String(key))) {
-      moveSprite(playerLoc, "NE");
+      movePlayer("NE");
     }
 
     if (PLAYER_MOVE_E.includes(String(key))) {
-      moveSprite(playerLoc, "E");
+      movePlayer("E");
     }
 
     if (PLAYER_MOVE_SE.includes(String(key))) {
-      moveSprite(playerLoc, "SE");
+      movePlayer("SE");
     }
 
     if (PLAYER_MOVE_S.includes(String(key))) {
-      moveSprite(playerLoc, "S");
+      movePlayer("S");
     }
 
     if (PLAYER_MOVE_SW.includes(String(key))) {
-      moveSprite(playerLoc, "SW");
+      movePlayer("SW");
     }
 
     if (PLAYER_MOVE_W.includes(String(key))) {
-      moveSprite(playerLoc, "W");
+      movePlayer("W");
     }
 
     if (PLAYER_MOVE_NW.includes(String(key))) {
-      moveSprite(playerLoc, "NW");
+      movePlayer("NW");
     }
   };
 
@@ -72,17 +119,20 @@ function App() {
   return (
     <div className="App">
       <div className="game" onKeyDown={handleKeyDown}>
-        <span
-          className="player sprite"
-          style={{
-            transform: `translate(${playerLoc.col * 10}px, ${playerLoc.row *
-              10}px)`
-          }}
-          role="img"
-          aria-label="player"
-        />
+        {Object.keys(sprites).map(key => (
+          <span
+            key={key}
+            className={`sprite ${sprites[key].type}`}
+            style={{
+              transform: `translate(${sprites[key].col * 10}px, ${sprites[key]
+                .row * 10}px)`
+            }}
+            role="img"
+            aria-label={`${sprites[key].type}-sprite`}
+          />
+        ))}
 
-        {JSON.stringify(playerLoc, null, 2)}
+        {JSON.stringify(sprites, null, 2)}
       </div>
     </div>
   );
