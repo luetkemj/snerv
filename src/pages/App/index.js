@@ -2,6 +2,8 @@ import React, { useEffect } from "react";
 import useEventListener from "@use-it/event-listener";
 import { useDispatch, useSelector } from "react-redux";
 
+import { random } from "lodash";
+
 import {
   addSprites,
   moveMonsters,
@@ -23,31 +25,11 @@ function App() {
           col: 2,
           row: 2
         },
-        {
+        ...Array.from(Array(100)).map(x => ({
           type: "MONSTER",
-          col: 10,
-          row: 10
-        },
-        {
-          type: "MONSTER",
-          col: 20,
-          row: 20
-        },
-        {
-          type: "MONSTER",
-          col: 30,
-          row: 30
-        },
-        {
-          type: "MONSTER",
-          col: 12,
-          row: 12
-        },
-        {
-          type: "MONSTER",
-          col: 15,
-          row: 15
-        }
+          col: random(0, 59),
+          row: random(0, 39)
+        }))
       ])
     );
   }, [dispatch]);
@@ -62,8 +44,6 @@ function App() {
   };
 
   const handleKeyDown = ({ key }) => {
-    console.log(key);
-
     // key bindings
     const PLAYER_MOVE_N = ["ArrowUp", "8", "w"];
     const PLAYER_MOVE_NE = ["9"];
@@ -125,8 +105,6 @@ function App() {
             aria-label={`${spritesMap[key].type}-sprite`}
           />
         ))}
-
-        {JSON.stringify(spritesMap, null, 2)}
       </div>
     </div>
   );
