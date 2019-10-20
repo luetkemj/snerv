@@ -2,106 +2,62 @@ import React, { useEffect } from "react";
 import useEventListener from "@use-it/event-listener";
 import { useDispatch, useSelector } from "react-redux";
 
-import { addSprite, moveSprite } from "../../actions/sprite.actions";
+import {
+  addSprites,
+  moveMonsters,
+  moveSprites
+} from "../../actions/sprite.actions";
 import "./App.scss";
 
 function App() {
   const dispatch = useDispatch();
-  const spriteIds = useSelector(state => state.spritesReducer.ids);
-  const spritesMap = useSelector(state => state.spritesReducer.map);
+  const spriteIds = useSelector(state => state.spritesReducer.spriteIds);
+  const spritesMap = useSelector(state => state.spritesReducer.spritesMap);
 
   // this will only run once like componentDidMount
   useEffect(() => {
     dispatch(
-      addSprite({
-        type: "PLAYER",
-        col: 0,
-        row: 0
-      })
-    );
-
-    dispatch(
-      addSprite({
-        type: "MONSTER",
-        col: 10,
-        row: 10
-      })
-    );
-
-    dispatch(
-      addSprite({
-        type: "MONSTER",
-        col: 15,
-        row: 23
-      })
-    );
-
-    dispatch(
-      addSprite({
-        type: "MONSTER",
-        col: 15,
-        row: 23
-      })
-    );
-
-    dispatch(
-      addSprite({
-        type: "MONSTER",
-        col: 15,
-        row: 23
-      })
-    );
-
-    dispatch(
-      addSprite({
-        type: "MONSTER",
-        col: 15,
-        row: 23
-      })
-    );
-
-    dispatch(
-      addSprite({
-        type: "MONSTER",
-        col: 15,
-        row: 23
-      })
-    );
-
-    dispatch(
-      addSprite({
-        type: "MONSTER",
-        col: 15,
-        row: 23
-      })
-    );
-
-    dispatch(
-      addSprite({
-        type: "MONSTER",
-        col: 15,
-        row: 23
-      })
+      addSprites([
+        {
+          type: "PLAYER",
+          col: 2,
+          row: 2
+        },
+        {
+          type: "MONSTER",
+          col: 10,
+          row: 10
+        },
+        {
+          type: "MONSTER",
+          col: 20,
+          row: 20
+        },
+        {
+          type: "MONSTER",
+          col: 30,
+          row: 30
+        },
+        {
+          type: "MONSTER",
+          col: 12,
+          row: 12
+        },
+        {
+          type: "MONSTER",
+          col: 15,
+          row: 15
+        }
+      ])
     );
   }, [dispatch]);
 
   const gameTick = () => {
-    console.log("gameTicked!");
-    const directions = ["N", "NE", "E", "SE", "S", "SW", "W", "NW"];
-    const randomDirection = () =>
-      directions[Math.floor(Math.random() * directions.length)];
-    dispatch(moveSprite(spritesMap[2], randomDirection()));
-    dispatch(moveSprite(spritesMap[3], randomDirection()));
-    dispatch(moveSprite(spritesMap[4], randomDirection()));
-    dispatch(moveSprite(spritesMap[5], randomDirection()));
-    dispatch(moveSprite(spritesMap[6], randomDirection()));
-    dispatch(moveSprite(spritesMap[7], randomDirection()));
-    dispatch(moveSprite(spritesMap[8], randomDirection()));
-    dispatch(moveSprite(spritesMap[9], randomDirection()));
+    dispatch(moveMonsters());
   };
 
   const movePlayer = dir => {
-    dispatch(moveSprite(spritesMap[1], dir));
+    dispatch(moveSprites([{ sprite: spritesMap[1], dir }]));
     gameTick();
   };
 

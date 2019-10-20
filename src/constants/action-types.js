@@ -1,4 +1,2 @@
-export const ADD_SPRITE = "ADD_SPRITE";
-export const UPDATE_SPRITE = "UPDATE_SPRITE";
-
-export const MOVE_SPRITE = "MOVE_SPRITE";
+export const ADD_SPRITES = "ADD_SPRITES";
+export const UPDATE_SPRITES = "UPDATE_SPRITES";

@@ -1,30 +1,32 @@
-import { uniq } from "lodash";
-import { ADD_SPRITE, UPDATE_SPRITE } from "../constants/action-types";
+import { keyBy, uniq } from "lodash";
+import { ADD_SPRITES, UPDATE_SPRITES } from "../constants/action-types";
 
 const initialState = {
-  ids: [],
-  map: {}
+  spriteIds: [],
+  spritesMap: {}
 };
 
 export default function(state = initialState, action) {
   switch (action.type) {
-    case ADD_SPRITE: {
+    case UPDATE_SPRITES: {
       return {
         ...state,
-        ids: uniq(state.ids.concat([action.payload.id])),
-        map: {
-          ...state.map,
-          [action.payload.id]: action.payload
+        spritesMap: {
+          ...state.spritesMap,
+          ...keyBy(action.payload, "id")
         }
       };
     }
 
-    case UPDATE_SPRITE: {
+    case ADD_SPRITES: {
       return {
         ...state,
-        map: {
-          ...state.map,
-          [action.payload.id]: action.payload
+        spriteIds: uniq(
+          state.spriteIds.concat(action.payload.map(sprite => sprite.id))
+        ),
+        spritesMap: {
+          ...state.spritesMap,
+          ...keyBy(action.payload, "id")
         }
       };
     }
