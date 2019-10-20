@@ -1,3 +1,20 @@
+# Snerv
+
+A JS roguelike built for the helluvit.
+
+- [x] player sprite
+- [x] monster sprites
+- [x] player movement
+- [x] random monster movement
+- [x] map boundaries
+- [ ] collision detection
+- [ ] agressive monsters
+
+![snerv](https://i.imgur.com/UlSVLtN.gif)
+
+
+---
+
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
 ## Available Scripts
