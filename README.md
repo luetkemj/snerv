@@ -1,6 +1,6 @@
 # Snerv
 
-A JS roguelike built for the helluvit.
+Building a JS roguelike for the helluvit.
 
 - [x] player sprite
 - [x] monster sprites
