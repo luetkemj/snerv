@@ -45,7 +45,7 @@ export default function(state = initialState, action) {
     case UPDATE_SPRITES: {
       return {
         ...state,
-        claimedLocations: action.claimedLocations
+        claimedLocations: action.payload.claimedLocations
       };
     }
     default:
