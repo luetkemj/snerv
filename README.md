@@ -7,10 +7,10 @@ Building a JS roguelike for the helluvit.
 - [x] player movement
 - [x] random monster movement
 - [x] map boundaries
-- [ ] collision detection
+- [x] collision detection (basic)
 - [ ] agressive monsters
 
-![snerv](https://i.imgur.com/UlSVLtN.gif)
+![snerv](https://i.imgur.com/RMlMrQ0.gif)
 
 
 ---
