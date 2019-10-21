@@ -1,8 +1,9 @@
 // rootReducer.js
 import { combineReducers } from "redux";
 
-import spritesReducer from "./sprites.reducer";
+import spritesState from "./sprites.reducer";
+import worldState from "./world.reducer";
 
-const rootReducer = combineReducers({ spritesReducer });
+const rootReducer = combineReducers({ spritesState, worldState });
 
 export default rootReducer;

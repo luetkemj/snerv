@@ -13,21 +13,25 @@ export default function(state = initialState, action) {
         ...state,
         spritesMap: {
           ...state.spritesMap,
-          ...keyBy(action.payload, "id")
+          ...keyBy(action.payload.sprites, "id")
         }
       };
     }
 
     case ADD_SPRITES: {
+      const spriteIds = uniq(
+        state.spriteIds.concat(action.payload.map(sprite => sprite.id))
+      );
+
+      const spritesMap = {
+        ...state.spritesMap,
+        ...keyBy(action.payload, "id")
+      };
+
       return {
         ...state,
-        spriteIds: uniq(
-          state.spriteIds.concat(action.payload.map(sprite => sprite.id))
-        ),
-        spritesMap: {
-          ...state.spritesMap,
-          ...keyBy(action.payload, "id")
-        }
+        spriteIds,
+        spritesMap
       };
     }
 

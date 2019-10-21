@@ -9,12 +9,17 @@ import {
   moveMonsters,
   moveSprites
 } from "../../actions/sprite.actions";
+
+import { playerMove } from "../../actions/player.actions";
+
 import "./App.scss";
 
 function App() {
   const dispatch = useDispatch();
-  const spriteIds = useSelector(state => state.spritesReducer.spriteIds);
-  const spritesMap = useSelector(state => state.spritesReducer.spritesMap);
+  const spriteIds = useSelector(state => state.spritesState.spriteIds);
+  const spritesMap = useSelector(state => state.spritesState.spritesMap);
+
+  const layerAt = useSelector(state => state.worldState.layers.layerAt);
 
   // this will only run once like componentDidMount
   useEffect(() => {
@@ -23,24 +28,28 @@ function App() {
         {
           type: "PLAYER",
           col: 2,
-          row: 2
+          row: 2,
+          layer: "layerAt",
+          noClip: true
         },
         ...Array.from(Array(100)).map(x => ({
           type: "MONSTER",
           col: random(0, 59),
-          row: random(0, 39)
+          row: random(0, 39),
+          layer: "layerAt",
+          noClip: true
         }))
       ])
     );
   }, [dispatch]);
 
-  const gameTick = () => {
-    dispatch(moveMonsters());
-  };
+  // const gameTick = () => {
+  //   dispatch(moveMonsters());
+  // };
 
   const movePlayer = dir => {
-    dispatch(moveSprites([{ sprite: spritesMap[1], dir }]));
-    gameTick();
+    // dispatch(moveSprites([{ sprite: spritesMap[1], dir }]));
+    dispatch(playerMove(dir));
   };
 
   const handleKeyDown = ({ key }) => {
@@ -92,7 +101,23 @@ function App() {
   return (
     <div className="App">
       <div className="game" onKeyDown={handleKeyDown}>
-        {spriteIds.map(key => (
+        {Object.keys(layerAt).map(key => {
+          const spriteId = layerAt[key];
+          return (
+            <span
+              key={spriteId}
+              className={`sprite ${spritesMap[spriteId].type}`}
+              style={{
+                transform: `translate(${spritesMap[spriteId].col *
+                  10}px, ${spritesMap[spriteId].row * 10}px)`
+              }}
+              role="img"
+              aria-label={`${spritesMap[spriteId].type}-sprite`}
+            ></span>
+          );
+        })}
+
+        {/* {spriteIds.map(key => (
           <span
             key={key}
             className={`sprite ${spritesMap[key].type}`}
@@ -104,7 +129,7 @@ function App() {
             role="img"
             aria-label={`${spritesMap[key].type}-sprite`}
           />
-        ))}
+        ))} */}
       </div>
     </div>
   );

@@ -1,7 +1,7 @@
 import { filter } from "lodash";
 
 import { UPDATE_SPRITES, ADD_SPRITES } from "../constants/action-types";
-import { getNeighbor } from "../lib/grid/math";
+import { getNeighbor, squareToId } from "../lib/grid/math";
 
 // todo: this needs to be in constants or something...
 const map = {
@@ -23,45 +23,83 @@ export function addSprites(sprites) {
     });
 }
 
-export function updateSprites(sprites) {
+export function updateSprites(sprites, claimedLocations) {
   return dispatch =>
     dispatch({
       type: UPDATE_SPRITES,
-      payload: sprites
+      payload: { sprites, claimedLocations }
     });
 }
 
+// instructions =
 // [
 //   {
 //     sprite,
 //     dir: N
-//   }
+//   },
+//  ...
 // ]
 export function moveSprites(instructions) {
-  return dispatch => {
+  return (dispatch, getState) => {
+    let claimedLocations = { ...getState().worldState.claimedLocations };
+
     dispatch(
       updateSprites(
         instructions.map(item => {
           const { sprite, dir } = item;
           const { col, row } = sprite;
           const newLoc = getNeighbor({ col, row }, dir);
+          const locId = squareToId(newLoc);
+          const layer = getState().worldState.layers[item.sprite.layer];
+          const existingSpriteId = layer[locId];
 
+          // stay in bounds
           if (newLoc.col < 0) return sprite;
           if (newLoc.col === map.cols) return sprite;
           if (newLoc.row < 0) return sprite;
           if (newLoc.row === map.rows) return sprite;
 
+          // don't collide with others already on the map
+          if (
+            existingSpriteId &&
+            getState().spritesState.spritesMap[existingSpriteId].noClip
+          ) {
+            return sprite;
+          }
+
+          // don't move if new loc has already been claimed
+          if (claimedLocations[locId]) {
+            return sprite;
+          }
+
+          // spot is free and unclaimed. Mark it as claimed and then move there
+          claimedLocations[locId] = locId;
+
           return { ...sprite, ...newLoc };
-        })
+        }),
+        claimedLocations
       )
     );
+  };
+}
+
+export function movePlayer(dir) {
+  return (dispatch, getState) => {
+    const player = getState().spritesState.spritesMap[1];
+    const instructions = [
+      {
+        sprite: player,
+        dir
+      }
+    ];
+    dispatch(moveSprites(instructions));
   };
 }
 
 export function moveMonsters() {
   return (dispatch, getState) => {
     const monsters = filter(
-      getState().spritesReducer.spritesMap,
+      getState().spritesState.spritesMap,
       sprite => sprite.type === "MONSTER"
     );
 
