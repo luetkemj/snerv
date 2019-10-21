@@ -8,8 +8,6 @@
 }
 
 .game {
-  width: 600px;
-  height: 400px;
   background: #333;
   position: relative;
 }
@@ -18,9 +16,6 @@
   display: block;
   position: absolute;
   background: #eee;
-  width: 10px;
-  height: 10px;
-  // transition: transform 300ms linear;
 }
 
 .PLAYER {

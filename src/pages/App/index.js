@@ -1,22 +1,20 @@
+import { random } from "lodash";
 import React, { useEffect } from "react";
 import useEventListener from "@use-it/event-listener";
 import { useDispatch, useSelector } from "react-redux";
 
-import { random } from "lodash";
-
 import {
-  addSprites,
-  moveMonsters,
-  moveSprites
-} from "../../actions/sprite.actions";
-
+  TILE_SIZE,
+  MAP_HEIGHT,
+  MAP_WIDTH
+} from "../../constants/world.constants";
+import { addSprites } from "../../actions/sprite.actions";
 import { playerMove } from "../../actions/player.actions";
 
 import "./App.scss";
 
 function App() {
   const dispatch = useDispatch();
-  const spriteIds = useSelector(state => state.spritesState.spriteIds);
   const spritesMap = useSelector(state => state.spritesState.spritesMap);
 
   const layerAt = useSelector(state => state.worldState.layers.layerAt);
@@ -32,7 +30,7 @@ function App() {
           layer: "layerAt",
           noClip: true
         },
-        ...Array.from(Array(100)).map(x => ({
+        ...Array.from(Array(10)).map(x => ({
           type: "MONSTER",
           col: random(0, 59),
           row: random(0, 39),
@@ -43,12 +41,7 @@ function App() {
     );
   }, [dispatch]);
 
-  // const gameTick = () => {
-  //   dispatch(moveMonsters());
-  // };
-
   const movePlayer = dir => {
-    // dispatch(moveSprites([{ sprite: spritesMap[1], dir }]));
     dispatch(playerMove(dir));
   };
 
@@ -100,7 +93,14 @@ function App() {
 
   return (
     <div className="App">
-      <div className="game" onKeyDown={handleKeyDown}>
+      <div
+        className="game"
+        onKeyDown={handleKeyDown}
+        style={{
+          width: MAP_WIDTH,
+          height: MAP_HEIGHT
+        }}
+      >
         {Object.keys(layerAt).map(key => {
           const spriteId = layerAt[key];
           return (
@@ -108,28 +108,16 @@ function App() {
               key={spriteId}
               className={`sprite ${spritesMap[spriteId].type}`}
               style={{
+                width: TILE_SIZE,
+                height: TILE_SIZE,
                 transform: `translate(${spritesMap[spriteId].col *
-                  10}px, ${spritesMap[spriteId].row * 10}px)`
+                  TILE_SIZE}px, ${spritesMap[spriteId].row * TILE_SIZE}px)`
               }}
               role="img"
               aria-label={`${spritesMap[spriteId].type}-sprite`}
             ></span>
           );
         })}
-
-        {/* {spriteIds.map(key => (
-          <span
-            key={key}
-            className={`sprite ${spritesMap[key].type}`}
-            style={{
-              transform: `translate(${spritesMap[key].col * 10}px, ${spritesMap[
-                key
-              ].row * 10}px)`
-            }}
-            role="img"
-            aria-label={`${spritesMap[key].type}-sprite`}
-          />
-        ))} */}
       </div>
     </div>
   );

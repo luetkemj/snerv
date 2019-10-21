@@ -1,13 +1,8 @@
 import { filter } from "lodash";
 
 import { UPDATE_SPRITES, ADD_SPRITES } from "../constants/action-types";
+import { MAP_COLS, MAP_ROWS } from "../constants/world.constants";
 import { getNeighbor, squareToId } from "../lib/grid/math";
-
-// todo: this needs to be in constants or something...
-const map = {
-  rows: 40,
-  cols: 60
-};
 
 let nextSpriteId = 0;
 
@@ -55,9 +50,9 @@ export function moveSprites(instructions) {
 
           // stay in bounds
           if (newLoc.col < 0) return sprite;
-          if (newLoc.col === map.cols) return sprite;
+          if (newLoc.col === MAP_COLS) return sprite;
           if (newLoc.row < 0) return sprite;
-          if (newLoc.row === map.rows) return sprite;
+          if (newLoc.row === MAP_ROWS) return sprite;
 
           // don't collide with others already on the map
           if (
