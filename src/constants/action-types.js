@@ -4,3 +4,5 @@ export const ADD_SPRITES = "ADD_SPRITES";
 export const UPDATE_SPRITES = "UPDATE_SPRITES";
 
 export const UPDATE_WORLD = "UPDATE_WORLD";
+
+export const ADD_NEW_LOG = "ADD_NEW_LOG";

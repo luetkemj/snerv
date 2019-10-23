@@ -1,6 +1,10 @@
 import { filter } from "lodash";
 
-import { UPDATE_SPRITES, ADD_SPRITES } from "../constants/action-types";
+import {
+  UPDATE_SPRITES,
+  ADD_SPRITES,
+  ADD_NEW_LOG
+} from "../constants/action-types";
 import { MAP_COLS, MAP_ROWS } from "../constants/world.constants";
 import { getNeighbor, squareToId } from "../lib/grid/math";
 
@@ -47,6 +51,9 @@ export function moveSprites(instructions) {
           const locId = squareToId(newLoc);
           const layer = getState().worldState.layers[item.sprite.layer];
           const existingSpriteId = layer[locId];
+          const existingSprite = getState().spritesState.spritesMap[
+            existingSpriteId
+          ];
 
           // stay in bounds
           if (newLoc.col < 0) return sprite;
@@ -55,10 +62,10 @@ export function moveSprites(instructions) {
           if (newLoc.row === MAP_ROWS) return sprite;
 
           // don't collide with others already on the map
-          if (
-            existingSpriteId &&
-            getState().spritesState.spritesMap[existingSpriteId].noClip
-          ) {
+          if (existingSpriteId && existingSprite.noClip) {
+            if (sprite.type !== existingSprite.type) {
+              dispatch(attack(sprite, existingSprite));
+            }
             return sprite;
           }
 
@@ -69,7 +76,6 @@ export function moveSprites(instructions) {
 
           // spot is free and unclaimed. Mark it as claimed and then move there
           claimedLocations[locId] = locId;
-
           return { ...sprite, ...newLoc };
         }),
         claimedLocations
@@ -81,12 +87,16 @@ export function moveSprites(instructions) {
 export function movePlayer(dir) {
   return (dispatch, getState) => {
     const player = getState().spritesState.spritesMap[1];
+    // don't move if dead
+    if (player.health <= 0) return;
+
     const instructions = [
       {
         sprite: player,
         dir
       }
     ];
+
     dispatch(moveSprites(instructions));
   };
 }
@@ -95,7 +105,7 @@ export function moveMonsters() {
   return (dispatch, getState) => {
     const monsters = filter(
       getState().spritesState.spritesMap,
-      sprite => sprite.type === "MONSTER"
+      sprite => sprite.type === "MONSTER" && sprite.health > 0
     );
 
     const directions = ["N", "NE", "E", "SE", "S", "SW", "W", "NW"];
@@ -108,5 +118,24 @@ export function moveMonsters() {
     }));
 
     dispatch(moveSprites(instructions));
+  };
+}
+
+export function attack(attacker, target) {
+  return dispatch => {
+    dispatch({ type: "ATTACK" });
+    if (target.type === "MONSTER") {
+      dispatch({
+        type: ADD_NEW_LOG,
+        payload: { text: `You attack and kill the monster!` }
+      });
+    }
+    if (target.type === "PLAYER") {
+      dispatch({
+        type: ADD_NEW_LOG,
+        payload: { text: `The monster kills you!` }
+      });
+    }
+    dispatch(updateSprites([{ ...target, health: 0 }]));
   };
 }

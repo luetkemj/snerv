@@ -5,6 +5,8 @@ import { useDispatch, useSelector } from "react-redux";
 
 import {
   TILE_SIZE,
+  MAP_COLS,
+  MAP_ROWS,
   MAP_HEIGHT,
   MAP_WIDTH
 } from "../../constants/world.constants";
@@ -16,8 +18,8 @@ import "./App.scss";
 function App() {
   const dispatch = useDispatch();
   const spritesMap = useSelector(state => state.spritesState.spritesMap);
-
   const layerAt = useSelector(state => state.worldState.layers.layerAt);
+  const gamelog = useSelector(state => state.gamelogState.logs);
 
   // this will only run once like componentDidMount
   useEffect(() => {
@@ -28,14 +30,16 @@ function App() {
           col: 2,
           row: 2,
           layer: "layerAt",
-          noClip: true
+          noClip: true,
+          health: 1
         },
         ...Array.from(Array(10)).map(x => ({
           type: "MONSTER",
-          col: random(0, 59),
-          row: random(0, 39),
+          col: random(0, MAP_COLS - 1),
+          row: random(0, MAP_ROWS - 1),
           layer: "layerAt",
-          noClip: true
+          noClip: true,
+          health: 1
         }))
       ])
     );
@@ -106,7 +110,9 @@ function App() {
           return (
             <span
               key={spriteId}
-              className={`sprite ${spritesMap[spriteId].type}`}
+              className={`sprite ${spritesMap[spriteId].type} ${
+                spritesMap[spriteId].health < 1 ? "dead" : ""
+              }`}
               style={{
                 width: TILE_SIZE,
                 height: TILE_SIZE,
@@ -118,6 +124,12 @@ function App() {
             ></span>
           );
         })}
+      </div>
+
+      <div className="gamelog">
+        {gamelog.map((logEntry, index) => (
+          <p key={index}>{logEntry.text}</p>
+        ))}
       </div>
     </div>
   );

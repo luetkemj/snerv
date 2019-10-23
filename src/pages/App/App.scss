@@ -20,8 +20,20 @@
 
 .PLAYER {
   z-index: 1;
+
+  &.dead {
+    background: crimson;
+  }
 }
 
 .MONSTER {
   background: green;
+
+  &.dead {
+    background: blue;
+  }
+}
+
+.gamelog {
+  background: white;
 }

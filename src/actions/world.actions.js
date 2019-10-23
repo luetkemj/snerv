@@ -21,6 +21,5 @@ export function updateWorld() {
     });
 
     dispatch({ type: UPDATE_WORLD, payload: updatedLayers });
-    console.log(Object.keys(getState().worldState.layers.layerAt).length);
   };
 }
