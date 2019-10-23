@@ -1,17 +1,8 @@
 # Snerv
 
-Building a JS roguelike for the helluvit.
+JS Roguelike Hobby Project
 
-- [x] player sprite
-- [x] monster sprites
-- [x] player movement
-- [x] random monster movement
-- [x] map boundaries
-- [x] collision detection (basic)
-- [ ] agressive monsters
-
-![snerv](https://i.imgur.com/RMlMrQ0.gif)
-
+[Development Log](https://github.com/luetkemj/snerv/blob/master/DEVLOG.md)
 
 ---
 
